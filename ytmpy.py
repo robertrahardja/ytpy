@@ -1,19 +1,18 @@
 #!/usr/bin/env python3
 """
-YouTube Transcript Batch Downloader
+YouTube Transcript Batch Downloader using yt-dlp
 This script downloads transcripts from multiple YouTube videos or playlists
-and saves them to text files in a specified folder.
+using yt-dlp, which handles both manual subtitles and auto-generated captions.
 """
 import argparse
 import re
 import sys
 import os
-import pyperclip
-import requests
 import json
+import subprocess
+import pyperclip
+from pathlib import Path
 from urllib.parse import urlparse, parse_qs
-from youtube_transcript_api import YouTubeTranscriptApi
-from youtube_transcript_api.formatters import TextFormatter
 
 def extract_video_id(url):
     """
@@ -53,286 +52,297 @@ def extract_playlist_id(url):
     
     return None
 
-def get_playlist_videos(playlist_id, api_key=None):
+def check_ytdlp_installed():
     """
-    Get all video IDs from a YouTube playlist.
-    If API key is not provided, will use a scraping approach.
-    """
-    if api_key:
-        return get_playlist_videos_api(playlist_id, api_key)
-    else:
-        return get_playlist_videos_scrape(playlist_id)
-
-def get_playlist_videos_scrape(playlist_id):
-    """
-    Get video IDs from a playlist using web scraping approach.
-    This is a fallback method if no API key is provided.
+    Check if yt-dlp is installed and accessible.
     """
     try:
-        # Create initial URL for the playlist
-        initial_url = f"https://www.youtube.com/playlist?list={playlist_id}"
-        response = requests.get(initial_url)
+        result = subprocess.run(['yt-dlp', '--version'], 
+                              capture_output=True, text=True, check=True)
+        print(f"Using yt-dlp version: {result.stdout.strip()}")
+        return True
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        print("Error: yt-dlp is not installed or not found in PATH.")
+        print("Install it with: pip install yt-dlp")
+        return False
+
+def get_video_info(url, languages=['en']):
+    """
+    Get video information and available subtitles using yt-dlp.
+    """
+    try:
+        # Get video info with available subtitles
+        cmd = [
+            'yt-dlp',
+            '--dump-json',
+            '--no-download',
+            '--write-auto-sub',
+            '--write-sub',
+            '--sub-langs', ','.join(languages + ['en', 'en-US', 'en-GB']),
+            url
+        ]
         
-        if response.status_code != 200:
-            print(f"Failed to fetch playlist. Status code: {response.status_code}")
-            return []
+        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
         
-        # Extract video IDs from the response using regex
-        # This is a simple approach and might break if YouTube changes their page structure
-        video_ids = re.findall(r'"videoId":"([^"]+)"', response.text)
+        # Parse each line as JSON (for playlists, yt-dlp outputs multiple JSON objects)
+        videos_info = []
+        for line in result.stdout.strip().split('\n'):
+            if line.strip():
+                try:
+                    video_info = json.loads(line)
+                    videos_info.append(video_info)
+                except json.JSONDecodeError:
+                    continue
+        
+        return videos_info
+    
+    except subprocess.CalledProcessError as e:
+        print(f"Error getting video info: {e}")
+        print(f"stderr: {e.stderr}")
+        return []
+
+def download_subtitles(url, output_dir, languages=['en'], prefer_auto=False):
+    """
+    Download subtitles for a video or playlist using yt-dlp.
+    
+    Args:
+        url: YouTube URL
+        output_dir: Directory to save subtitles
+        languages: List of preferred languages
+        prefer_auto: Whether to prefer auto-generated subtitles over manual ones
+                    (False = prefer manual, download auto if manual not available)
+    """
+    try:
+        # Ensure output directory exists
+        Path(output_dir).mkdir(parents=True, exist_ok=True)
+        
+        # Build subtitle language list with proper priority
+        sub_langs = []
+        
+        if prefer_auto:
+            # Prefer auto-generated first, then manual as fallback
+            for lang in languages:
+                sub_langs.append(f"{lang}-auto")  # Auto-generated version first
+                sub_langs.append(lang)           # Manual version as fallback
+            # Add English variants
+            sub_langs.extend(['en-auto', 'en', 'en-US', 'en-GB'])
+        else:
+            # Prefer manual first, then auto-generated as fallback
+            for lang in languages:
+                sub_langs.append(lang)           # Manual version first
+                sub_langs.append(f"{lang}-auto") # Auto-generated as fallback
+            # Add English variants
+            sub_langs.extend(['en', 'en-US', 'en-GB', 'en-auto'])
         
         # Remove duplicates while preserving order
-        unique_ids = []
-        for vid in video_ids:
-            if vid not in unique_ids:
-                unique_ids.append(vid)
+        sub_langs = list(dict.fromkeys(sub_langs))
         
-        print(f"Found {len(unique_ids)} videos in playlist")
-        return unique_ids
+        cmd = [
+            'yt-dlp',
+            '--write-sub',      # Download manual subtitles
+            '--write-auto-sub', # Download auto-generated subtitles
+            '--skip-download',  # Only download subtitles, not video
+            '--sub-langs', ','.join(sub_langs),
+            '--sub-format', 'vtt/srt/best',
+            '--output', f"{output_dir}/%(title)s.%(ext)s",
+            '--restrict-filenames',  # Use only ASCII characters in filenames
+            url
+        ]
+        
+        print(f"Language priority: {' > '.join(sub_langs[:6])}{'...' if len(sub_langs) > 6 else ''}")
+        print(f"Running command: {' '.join(cmd)}")
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        
+        if result.returncode == 0:
+            print("Subtitle download completed successfully")
+            return True
+        else:
+            print(f"Subtitle download failed: {result.stderr}")
+            return False
     
     except Exception as e:
-        print(f"Error scraping playlist: {e}")
-        return []
-
-def get_playlist_videos_api(playlist_id, api_key):
-    """
-    Get all video IDs from a YouTube playlist using the YouTube Data API.
-    """
-    video_ids = []
-    next_page_token = None
-    
-    try:
-        while True:
-            # Build the API request URL
-            url = f"https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&maxResults=50&playlistId={playlist_id}&key={api_key}"
-            if next_page_token:
-                url += f"&pageToken={next_page_token}"
-            
-            # Make the request
-            response = requests.get(url)
-            if response.status_code != 200:
-                print(f"API request failed: {response.status_code}")
-                break
-            
-            data = response.json()
-            
-            # Extract video IDs
-            for item in data.get('items', []):
-                video_id = item.get('contentDetails', {}).get('videoId')
-                if video_id:
-                    video_ids.append(video_id)
-            
-            # Check if there are more pages
-            next_page_token = data.get('nextPageToken')
-            if not next_page_token:
-                break
-        
-        print(f"Found {len(video_ids)} videos in playlist")
-        return video_ids
-    
-    except Exception as e:
-        print(f"Error retrieving playlist: {e}")
-        return []
-
-def get_video_title(video_id, api_key=None):
-    """
-    Get the title of a YouTube video.
-    If API key is provided, use the API, otherwise use web scraping.
-    """
-    if api_key:
-        try:
-            url = f"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={video_id}&key={api_key}"
-            response = requests.get(url)
-            
-            if response.status_code == 200:
-                data = response.json()
-                if data.get('items'):
-                    return data['items'][0]['snippet']['title']
-        except Exception as e:
-            print(f"Error getting video title via API: {e}")
-    
-    # Fallback to basic scraping
-    try:
-        url = f"https://www.youtube.com/watch?v={video_id}"
-        response = requests.get(url)
-        
-        if response.status_code == 200:
-            # Extract title using regex
-            title_match = re.search(r'<title>(.*?) - YouTube</title>', response.text)
-            if title_match:
-                return title_match.group(1)
-    except Exception as e:
-        print(f"Error getting video title: {e}")
-    
-    return video_id  # Return video ID as fallback
-
-def get_transcript(video_id, languages=['en']):
-    """
-    Retrieve the transcript for a YouTube video.
-    """
-    try:
-        transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
-        
-        # Try to get transcript in preferred languages
-        transcript = None
-        for lang in languages:
-            try:
-                transcript = transcript_list.find_transcript([lang])
-                break
-            except:
-                continue
-        
-        # If no transcript found in preferred languages, get any available transcript
-        if transcript is None:
-            try:
-                transcript = transcript_list.find_generated_transcript(['en'])
-            except:
-                # Try to get any available transcript
-                available_transcripts = list(transcript_list)
-                if available_transcripts:
-                    transcript = available_transcripts[0]
-        
-        if transcript:
-            return transcript.fetch()
-        return None
-    except Exception as e:
-        print(f"Error retrieving transcript for video {video_id}: {e}")
-        return None
-
-def format_transcript(transcript, include_title=None, include_video_id=None):
-    """
-    Format a transcript into plain text.
-    """
-    formatter = TextFormatter()
-    text_formatted = formatter.format_transcript(transcript)
-    
-    # Add title and video ID as header if provided
-    header = ""
-    if include_title:
-        header += f"Title: {include_title}\n"
-    if include_video_id:
-        header += f"Video ID: {include_video_id}\n"
-    if header:
-        header += f"URL: https://www.youtube.com/watch?v={include_video_id}\n\n"
-    
-    return header + text_formatted + "\n\n"
-
-def ensure_directory_exists(directory):
-    """
-    Create directory if it doesn't exist.
-    """
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-        print(f"Created directory: {directory}")
-
-def save_transcript(transcript, output_dir=None, output_file=None, copy_to_clipboard=False, 
-                    include_title=None, include_video_id=None):
-    """
-    Save the transcript to a text file and/or clipboard.
-    """
-    if not transcript:
+        print(f"Error downloading subtitles: {e}")
         return False
-    
-    text_formatted = format_transcript(transcript, include_title, include_video_id)
-    
-    # Copy to clipboard if requested
-    if copy_to_clipboard:
-        try:
-            pyperclip.copy(text_formatted)
-            print("Transcript copied to clipboard!")
-        except Exception as e:
-            print(f"Error copying to clipboard: {e}")
-    
-    # Save to file if output file is specified
-    if output_file:
-        try:
-            # Create directory if it doesn't exist
-            if output_dir:
-                ensure_directory_exists(output_dir)
-                full_path = os.path.join(output_dir, output_file)
-            else:
-                full_path = output_file
-                
-            with open(full_path, 'w', encoding='utf-8') as f:
-                f.write(text_formatted)
-            print(f"Transcript saved to: {full_path}")
-        except Exception as e:
-            print(f"Error saving transcript: {e}")
-    
-    return True
 
-def process_url(url, output_dir, languages, api_key, copy_to_clipboard=False):
+def convert_subtitles_to_text(subtitle_dir, output_format='txt'):
     """
-    Process a single URL (either video or playlist).
+    Convert downloaded subtitle files (VTT/SRT) to plain text.
     """
-    # Check if it's a playlist or single video
+    subtitle_files = []
+    
+    # Find all subtitle files in the directory
+    for ext in ['*.vtt', '*.srt']:
+        subtitle_files.extend(Path(subtitle_dir).glob(ext))
+    
+    converted_files = []
+    
+    for sub_file in subtitle_files:
+        try:
+            # Read subtitle file
+            with open(sub_file, 'r', encoding='utf-8', errors='ignore') as f:
+                content = f.read()
+            
+            # Convert to plain text
+            plain_text = extract_text_from_subtitles(content, str(sub_file))
+            
+            if plain_text:
+                # Create output filename
+                output_file = sub_file.with_suffix(f'.{output_format}')
+                
+                # Write plain text
+                with open(output_file, 'w', encoding='utf-8') as f:
+                    f.write(plain_text)
+                
+                print(f"Converted: {sub_file.name} -> {output_file.name}")
+                converted_files.append(output_file)
+                
+                # Remove original subtitle file
+                sub_file.unlink()
+        
+        except Exception as e:
+            print(f"Error converting {sub_file}: {e}")
+    
+    return converted_files
+
+def extract_text_from_subtitles(content, filename):
+    """
+    Extract plain text from subtitle content (VTT or SRT format).
+    """
+    lines = content.split('\n')
+    text_lines = []
+    
+    # Determine if it's VTT or SRT
+    is_vtt = filename.endswith('.vtt') or 'WEBVTT' in content
+    
+    if is_vtt:
+        # Process VTT format
+        in_cue = False
+        for line in lines:
+            line = line.strip()
+            
+            # Skip VTT header and metadata
+            if line.startswith('WEBVTT') or line.startswith('NOTE') or line.startswith('STYLE'):
+                continue
+            
+            # Skip timestamp lines
+            if '-->' in line:
+                in_cue = True
+                continue
+            
+            # Skip empty lines
+            if not line:
+                in_cue = False
+                continue
+            
+            # Extract text content (skip cue settings)
+            if in_cue and not line.startswith('<') and not line.endswith('>'):
+                # Remove VTT formatting tags
+                clean_line = re.sub(r'<[^>]+>', '', line)
+                clean_line = re.sub(r'&[a-zA-Z]+;', '', clean_line)  # Remove HTML entities
+                if clean_line.strip():
+                    text_lines.append(clean_line.strip())
+    
+    else:
+        # Process SRT format
+        for line in lines:
+            line = line.strip()
+            
+            # Skip sequence numbers
+            if line.isdigit():
+                continue
+            
+            # Skip timestamp lines
+            if '-->' in line:
+                continue
+            
+            # Skip empty lines
+            if not line:
+                continue
+            
+            # This should be subtitle text
+            # Remove SRT formatting tags
+            clean_line = re.sub(r'<[^>]+>', '', line)
+            clean_line = re.sub(r'\{[^}]+\}', '', clean_line)  # Remove formatting
+            if clean_line.strip():
+                text_lines.append(clean_line.strip())
+    
+    # Join all text and clean up
+    full_text = ' '.join(text_lines)
+    
+    # Basic cleanup
+    full_text = re.sub(r'\s+', ' ', full_text)  # Normalize whitespace
+    full_text = full_text.strip()
+    
+    return full_text
+
+def list_available_subtitles(url):
+    """
+    List all available subtitles for a video without downloading.
+    """
+    try:
+        cmd = [
+            'yt-dlp',
+            '--list-subs',
+            '--no-download',
+            url
+        ]
+        
+        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        print("Available subtitles:")
+        print(result.stdout)
+        return True
+    
+    except subprocess.CalledProcessError as e:
+        print(f"Error listing subtitles: {e}")
+        return False
+
+def process_url(url, output_dir, languages=['en'], list_only=False, 
+                prefer_auto=False, copy_to_clipboard=False):
+    """
+    Process a single URL (video or playlist) and download transcripts.
+    """
+    if list_only:
+        print(f"Listing available subtitles for: {url}")
+        return list_available_subtitles(url)
+    
+    print(f"Processing URL: {url}")
+    
+    # Determine if it's a playlist or single video
     playlist_id = extract_playlist_id(url)
     
     if playlist_id:
-        print(f"Processing playlist ID: {playlist_id}")
-        # Create a subfolder for the playlist
-        playlist_dir = os.path.join(output_dir, f"playlist_{playlist_id}")
-        ensure_directory_exists(playlist_dir)
-        
-        video_ids = get_playlist_videos(playlist_id, api_key)
-        
-        if not video_ids:
-            print("No videos found in playlist or failed to retrieve playlist")
-            return 0
-            
-        # Process each video in the playlist
-        successful_transcripts = 0
-        for i, video_id in enumerate(video_ids):
-            print(f"Processing video {i+1}/{len(video_ids)}: {video_id}")
-            title = get_video_title(video_id, api_key)
-            
-            transcript = get_transcript(video_id, languages)
-            
-            if transcript:
-                # Create a safe filename from title
-                safe_title = re.sub(r'[\\/*?:"<>|]', "_", title)
-                filename = f"{safe_title}_{video_id}.txt"
-                
-                save_transcript(transcript, 
-                               output_dir=playlist_dir,
-                               output_file=filename, 
-                               copy_to_clipboard=copy_to_clipboard and (i == len(video_ids)-1),
-                               include_title=title,
-                               include_video_id=video_id)
-                successful_transcripts += 1
-            else:
-                print(f"No transcript available for video: {video_id}")
-        
-        print(f"Successfully downloaded {successful_transcripts} out of {len(video_ids)} transcripts")
-        return successful_transcripts
-        
+        print(f"Processing playlist: {playlist_id}")
+        output_subdir = Path(output_dir) / f"playlist_{playlist_id}"
     else:
-        # Handle single video
         video_id = extract_video_id(url)
-        if not video_id:
-            print(f"Error: Invalid YouTube URL: {url}")
-            return 0
-        
-        print(f"Processing video ID: {video_id}")
-        title = get_video_title(video_id, api_key)
-        
-        transcript = get_transcript(video_id, languages)
-        
-        if transcript:
-            # Create a safe filename from title
-            safe_title = re.sub(r'[\\/*?:"<>|]', "_", title)
-            filename = f"{safe_title}_{video_id}.txt"
-            
-            save_transcript(transcript, 
-                           output_dir=output_dir,
-                           output_file=filename, 
-                           copy_to_clipboard=copy_to_clipboard,
-                           include_title=title,
-                           include_video_id=video_id)
-            return 1
+        if video_id:
+            print(f"Processing video: {video_id}")
+            output_subdir = Path(output_dir) / f"video_{video_id}"
         else:
-            print(f"Failed to download transcript for {video_id}")
-            return 0
+            print(f"Processing URL with auto-generated folder name")
+            output_subdir = Path(output_dir) / "downloads"
+    
+    # Download subtitles
+    success = download_subtitles(url, str(output_subdir), languages, prefer_auto)
+    
+    if success:
+        # Convert subtitles to plain text
+        converted_files = convert_subtitles_to_text(str(output_subdir))
+        
+        # Copy last file to clipboard if requested
+        if copy_to_clipboard and converted_files:
+            try:
+                with open(converted_files[-1], 'r', encoding='utf-8') as f:
+                    content = f.read()
+                pyperclip.copy(content)
+                print(f"Copied {converted_files[-1].name} to clipboard")
+            except Exception as e:
+                print(f"Error copying to clipboard: {e}")
+        
+        print(f"Successfully processed. Files saved to: {output_subdir}")
+        return len(converted_files)
+    
+    return 0
 
 def read_urls_from_file(file_path):
     """
@@ -340,7 +350,7 @@ def read_urls_from_file(file_path):
     """
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
-            urls = [line.strip() for line in f if line.strip()]
+            urls = [line.strip() for line in f if line.strip() and not line.startswith('#')]
         print(f"Read {len(urls)} URLs from {file_path}")
         return urls
     except Exception as e:
@@ -348,21 +358,41 @@ def read_urls_from_file(file_path):
         return []
 
 def main():
-    parser = argparse.ArgumentParser(description='Download transcripts from multiple YouTube videos or playlists')
-    parser.add_argument('urls', nargs='*', help='YouTube video or playlist URLs (space separated)')
-    parser.add_argument('-f', '--file', help='Text file with YouTube URLs (one per line)')
-    parser.add_argument('-o', '--output-dir', default='youtube_transcripts', 
+    parser = argparse.ArgumentParser(
+        description='Download transcripts from YouTube videos or playlists using yt-dlp',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  %(prog)s "https://www.youtube.com/watch?v=VIDEO_ID"
+  %(prog)s "https://www.youtube.com/playlist?list=PLAYLIST_ID" --prefer-auto
+  %(prog)s -f urls.txt --languages en es fr
+  %(prog)s --list-subs "https://www.youtube.com/watch?v=VIDEO_ID"
+        """
+    )
+    
+    parser.add_argument('urls', nargs='*', 
+                        help='YouTube video or playlist URLs (space separated)')
+    parser.add_argument('-f', '--file', 
+                        help='Text file with YouTube URLs (one per line)')
+    parser.add_argument('-o', '--output-dir', default='youtube_transcripts',
                         help='Output directory (default: youtube_transcripts)')
-    parser.add_argument('-l', '--languages', nargs='+', default=['en'], 
+    parser.add_argument('-l', '--languages', nargs='+', default=['en'],
                         help='Preferred languages (default: en)')
-    parser.add_argument('-c', '--clipboard', action='store_true', 
+    parser.add_argument('-c', '--clipboard', action='store_true',
                         help='Copy the last transcript to clipboard')
-    parser.add_argument('--api-key', help='YouTube Data API key (for better title and playlist handling)')
+    parser.add_argument('--list-subs', action='store_true',
+                        help='List available subtitles without downloading')
+    parser.add_argument('--prefer-auto', action='store_true',
+                        help='Prefer auto-generated subtitles over manual (default: prefer manual)')
     
     args = parser.parse_args()
     
-    # Collect all URLs from command line arguments and/or file
-    urls = args.urls
+    # Check if yt-dlp is installed
+    if not check_ytdlp_installed():
+        sys.exit(1)
+    
+    # Collect all URLs
+    urls = args.urls or []
     if args.file:
         file_urls = read_urls_from_file(args.file)
         urls.extend(file_urls)
@@ -372,20 +402,35 @@ def main():
         parser.print_help()
         sys.exit(1)
     
-    # Create the output directory
-    ensure_directory_exists(args.output_dir)
+    # Create output directory
+    if not args.list_subs:
+        Path(args.output_dir).mkdir(parents=True, exist_ok=True)
+        print(f"Output directory: {Path(args.output_dir).absolute()}")
     
     # Process each URL
     total_successful = 0
     for i, url in enumerate(urls):
-        print(f"\nProcessing URL {i+1}/{len(urls)}: {url}")
-        # Only copy the last transcript to clipboard if requested
+        print(f"\n{'='*60}")
+        print(f"Processing URL {i+1}/{len(urls)}")
+        print(f"{'='*60}")
+        
         copy_to_clipboard = args.clipboard and (i == len(urls) - 1)
-        successful = process_url(url, args.output_dir, args.languages, args.api_key, copy_to_clipboard)
-        total_successful += successful
+        successful = process_url(
+            url, 
+            args.output_dir, 
+            args.languages,
+            args.list_subs,
+            args.prefer_auto,  # Now defaults to False (prefer manual)
+            copy_to_clipboard
+        )
+        
+        if isinstance(successful, int):
+            total_successful += successful
     
-    print(f"\nSummary: Successfully downloaded {total_successful} transcripts from {len(urls)} URLs")
-    print(f"Transcripts saved to directory: {os.path.abspath(args.output_dir)}")
+    if not args.list_subs:
+        print(f"\n{'='*60}")
+        print(f"Summary: Successfully downloaded {total_successful} transcripts from {len(urls)} URLs")
+        print(f"Files saved to: {Path(args.output_dir).absolute()}")
 
 if __name__ == '__main__':
     main()
