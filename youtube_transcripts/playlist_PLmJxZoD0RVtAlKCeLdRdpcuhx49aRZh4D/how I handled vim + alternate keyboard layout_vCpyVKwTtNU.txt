@@ -1,0 +1,115 @@
+Title: how I handled vim + alternate keyboard layout
+Video ID: vCpyVKwTtNU
+URL: https://www.youtube.com/watch?v=vCpyVKwTtNU
+
+Something I get asked a lot is if you
+use Vim and an alternate keyboard
+layout, aren't all the muscle memories
+like all messed up because of that and
+especially the arrow keys. And I faced
+the exact same problem when I switched.
+At first I was like, "Oh my I'm
+it's it's over for my Vim career, you
+know. Um, so I tried to remap things,
+but immediately you're going to face a
+bunch of problems doing that. The first
+one is either you just remap the arrow
+keys and then you have to like map other
+keys to fill that gap. You know what I
+mean? If you map
+HJKL like or the keys you need for say
+in comac dh it's neio and you have to
+map those away so that you can put hjk
+back there. You have to put neio back in
+those places. So that's not terrible.
+That's four remaps. But if you don't
+want to do that you're going to have to
+remap more things and not close the
+loop. Um, and then I don't really love
+that because even if you're just
+remapping four things, it's like it's
+just kind of different than a fully like
+no config changes to Vims. It's not
+terrible, right? It's just like now
+every time I SSH into something, I'm
+going to need to change that or my
+muscle memory will be bad. And I
+currently haven't really found a good
+workflow for bringing over my local DOD
+files. like I should just have one but
+it's like sometimes they don't have Vim
+installed or it's like an older version
+of Vim or so you just need it's not
+terrible you just need like the Vim
+script remaps but I just don't want to
+deal with that. So, the other option is
+you just suck it up. And that's what I
+did. At first, I was like, there's no
+way. That's they've got to be joking,
+right? Um, and people say, "Well, you'll
+use the other motions more." And I
+didn't really buy that that much, but I
+just kind of did it. And actually, it's
+really I I've got to say, I now prefer
+the placement of the Vim keys in
+Colemarmac. um as crazy as it sounds.
+But the reason is the F and J keys are
+actually kind of in intuitive places and
+and the the H and and K or H and L,
+they're kind of like up and down from
+each other in opposite places. So you
+like you you go up to go down and vice
+versa. Um but actually when they're
+moved away, I found that it's it's more
+annoying to use those. So, I started to
+use other motions more like people are
+actually saying, and it really actually
+wasn't that bad. And now I just I don't
+have this extra annoying level of
+configuration. It's not a huge deal if
+you want to do that. I know people like
+Ben Valick, I think, have done that.
+Completely valid remap, and it's not
+that big of an ass to switch over those
+lines, but for me, I just wanted like no
+abstraction between them. I wanted just
+type on my keyboard layout and just no
+vim. Um, and yeah, it's uh it just got
+to a point where I relearned it. I got
+used to it. It was It's much much easier
+to break ground that you've already
+covered um than to break it for the
+first time. So, because I knew all the
+Vim motions, yeah, they were moved
+around a little bit, but it's still like
+you've got the you've got them in your
+head. You know what I mean? You're like
+N. Oh, N for next. So, I'm just going to
+hit the N key. It doesn't matter that
+it's in a different place. Whereas if
+you tried to force the certy layout of
+Vim, then you'd be like and for or or
+it's weird because now the keys are like
+misaligned from the Vim semantic
+meanings. You know what I
+mean? Whereas whereas you can kind of
+keep them in your head if you just don't
+remap. Hopefully that made sense. Um if
+it didn't, just go back and rewatch that
+and think about what I was saying really
+hard. Um, but yeah, that's pretty much
+my two cents on that issue. Feel free to
+disagree. I'm sure that's it's not like
+the only valid way to do it, but um
+that's what I did. It worked pretty
+well. Um, and yeah, I I think just when
+you hear that advice initially to just
+like suck it up and deal with it, it
+seems like crushing, but it's really not
+as bad as it sounds. So, I would just
+power through it. It'll take you maybe a
+day to get the muscle memory back. the
+arrow keys. They're a little It feels
+bad at first, but you'll get used to
+them being there.
+

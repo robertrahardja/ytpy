@@ -1,0 +1,61 @@
+Title: What even is this vim command
+Video ID: aVtTg8lXIxg
+URL: https://www.youtube.com/watch?v=aVtTg8lXIxg
+
+Unfortunately, I heavily click baited
+you. The syntax to time travel and Vim
+isn't this. It's actually that it's a
+really kind of useless thing, but it's a
+it's a cool one. I basically never use
+it, but maybe there's some um there's
+some extra stuff to it that I failed to
+consider. You can type earlier or later.
+I'm going to type earlier. And then an
+amount of seconds, days,
+um hours, any any time duration. So, if
+I type 40s, that'll take me 40 seconds
+back in time to this where um not sure
+really what I was doing. And then if I
+want to go back later, I can type later
+40 days, which will take me to the end
+of the file history. Um I don't know who
+in their right mind would travel around
+in version history through time. Maybe
+there's some kind of weird workflow
+where you're like looking at a timer all
+the time between writes. But for me, I
+just use undo and redo. But there is a
+little bit more to it than that because
+if you look at the help page for
+earlier, instead of just traveling by
+time like they show here, you can also
+travel by rights, which is kind of a
+weird thing. Um I the file I'm in
+doesn't have rights. It's just like a
+nameless file. So,
+uh, I can't really do that. But if you
+want to travel back and forth by number
+of
+rights and then later, of course. And
+then there's also this G+, go to the
+newer state and you can you can repeat
+it. Um, so that's kind of an interesting
+thing. I heard about that in a uh in a
+Luke Smith video a while ago. It always
+stuck with me because it it is like
+literal time travel. And it's really
+interesting that Vim has like an
+internal timer mechanism, but yeah, it
+seems pretty useless to me. Maybe
+um let me know if you have some kind of
+workflow with this cuz I'd be shocked if
+you could keep track of changes over
+time like that. This has saved me once
+or twice, I will say. Um, when for some
+reason I'm not using git like an idiot
+and the undo tree is like too long and
+confusing and I don't want to do a 100 U
+and I just want to do 10 earlier earlier
+10. I've done that before, but other
+than that, yeah, pretty niche one.
+

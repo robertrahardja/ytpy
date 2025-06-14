@@ -1,0 +1,86 @@
+Title: Programming languages explained in terms of vim.
+Video ID: XqpU1zqwuBc
+URL: https://www.youtube.com/watch?v=XqpU1zqwuBc
+
+C is this language that they use to
+write Vim and Neovim. It's very
+low-level and fast, so it makes both
+editors a great experience. I don't
+really think it's used for anything else
+practical, but it has a great reputation
+just because of how much work it's done
+for the Vim editor. Next up is Lua and
+Vimcript. These are both configuration
+languages for Vim. We started off kind
+of weekly with Vimcript, unfortunately,
+but it did have the upside of scaring
+off a lot of beginners. But now that we
+have Lua as the configuration language,
+which is a lot less weird and arcane,
+you can actually write pretty
+understandable plugins and code. Lua
+also has this great data type called the
+table which is just OP for
+configuration. I think that's why they
+used it. It's also beginner friendly.
+Just a great language overall. It's
+dynamically typed, which is a little bit
+unfortunate, but it has like a type hint
+thing. Um, so maybe we'll get a Lua
+TypeScript disaster in the near future.
+Then we have JavaScript and React and
+other web frameworks. These are usually
+used to um render blogs and websites
+which people use to discuss Vim and the
+development of Vim. Pretty important to
+the ecosystem overall. I'd say we have
+Swift and Ruby. Swift is this
+interesting language is written for this
+operating system that can wrap around
+and run an instance of Vim and Ruby is
+used to install Vim on that operating
+system. Then we have French. A lot like
+English, French is used to talk about
+Vim and condescendingly say things about
+other people's editors like VS Code.
+Then we have Markdown. Markdown is
+actually used all over the web, also for
+blogs about Vim, but also to write
+install instructions for your Neoim
+plugins. Then we have Rust. Rust is a
+tool to rewrite Vim um with slightly
+different movement order. This is
+actually an attempt by the cult of Emacs
+to pull people away from Vim. That's why
+you see people so aggressively
+recruiting for editors like Zed and
+Helix. Hasll is a super impractical
+language that's used by hardcore flexers
+when using Vim isn't enough to show that
+you're a better programmer and you have
+to seriously handicap yourself by having
+a terrible package manager and really
+weird integration and language features.
+Latte is this language that goes
+handinhand with Vim. It's used to write
+PDFs and papers about productivity and
+snippets um in Vim. It's also used for
+certain blog sites where you can talk
+about your workflow and notetaking using
+Vim and Latte. It's kind of a
+self-referential thing. Then we have
+Python. This is a um a command built
+into Vim. Some people use it for AI and
+stuff, but it's pretty much just this
+weird little shell interpreter that's
+built into Vim by default. And I mean
+Neo Vim. I don't think it was built into
+the original until a little later.
+There's also C++, which is kind of
+similar to C. pretty much every language
+I can think of that's remotely relevant
+to Vim. But it's also possible I
+completely missed one or two major ones
+or four or five minor eight I don't know
+whatever.
+

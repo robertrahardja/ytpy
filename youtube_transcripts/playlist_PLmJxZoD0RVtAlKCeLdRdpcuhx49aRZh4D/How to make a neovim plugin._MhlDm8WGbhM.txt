@@ -1,0 +1,283 @@
+Title: How to make a neovim plugin.
+Video ID: MhlDm8WGbhM
+URL: https://www.youtube.com/watch?v=MhlDm8WGbhM
+
+The first and most important step in
+developing a neoven plugin is making
+sure your idea isn't hot ass, which is
+actually harder than it sounds because
+we're seeing tons of like terrible
+plugins being churned out. And my theory
+is it's because people want to like
+promote their GitHub account and just
+look cool. Um, at least that's why I did
+it. But don't make fun of those people
+because they probably like feel really
+bad about it. So here's another
+halfbaked plug-in idea as an example to
+go through the process of publishing a
+plugin. So my idea is basically
+sometimes they're like files that kind
+of come in pairs. For instance, C++
+files have header files and same with C
+files that kind of have type definitions
+usually and go with them. And I wanted
+to be able to switch between those
+really quickly. And maybe there's a
+plugin that already does this, but I
+couldn't find it easily. So I wrote like
+a little thing. If I open up a C++ file,
+you can see it says include engine.h at
+the top. You could like use telescope
+and then like look up engine H and
+switch to it, but that's too much work
+for us in the Vim industry. Instead, we
+have to do leader B and then boom,
+you're you're at either one. Another
+example of this I found is with fragment
+shaders and vertex shaders. If you don't
+know, in 3D rendering, there's like two
+different shaders that kind of translate
+3D to 2D and then one colors them in.
+It's a little more complicated than
+that, but that's the gist. So, you want
+to switch between those two shaders.
+There you go. Easy as that. Um, another
+example is if you have a meta framework
+like Next or NXT, they have server files
+and spelt does too and then page files
+and sometimes you want to switch between
+those quickly to update logic and UI.
+Um, so basically how I did this is if I
+open up I think it's in keys. Yeah, I
+have a function called jump pair. And
+what it does is it gets the file
+extension and then it has a bunch of
+source extensions and a bunch of header
+extensions and it kind of just takes
+what the source extension is and if it's
+if it's one of these ones, it it tries
+to match it to an existing header. So if
+you've got a C++ file, it'll say like,
+oh sweet, there's a there's ah
+orhpp that version. If it doesn't, we
+just say not a recognized pair and
+here's the code to switch it. Super
+simple. Um, yeah, corresponding file not
+found if we don't find it. And then I
+just have leader B mapped to that. So
+that's all well and good, but that's
+just some config stuff. Um, and what you
+want to do is cram this down someone
+else's throat and farm clout online for
+it at the same time. So how you do that
+is you find a plug-in template. I found
+this one. It's pretty good. Um, it has
+like a little script that can help you
+rename your plugin. It has a nice little
+template. So what you're going to
+do
+is clone this. So I'll copy the
+repository, go to my projects, get
+clone, paste that in, and then we want
+to rename the whole thing. So mv dash
+recursive nvim plugin template. And then
+let's switch that
+to pair um to be
+cute. Oh, illegal option. I think it
+probably wants a slash right there, too.
+Nope. I thought you could move
+recursively. Maybe I don't need
+that. Yeah, there we go. Um, so open
+that up called
+pair using team sessionizer by the way.
+And then let's CD into
+that. Okay, we're on main. That's great.
+But first, let's paste in our function.
+So, I'm going to grab this. I'm going to
+delete it actually so I don't have a
+duplicate in my config. Well, actually,
+yeah. Okay. And then the Oops. The
+entry. What? Why can't I take V? There
+we go. Freaking
+zish. Okay. To open up, I think it's a
+nitpi is where you start. But let's run
+the rename script. So in
+pair cd back into it and go into fish.
+There we go. Actually stay in zish.
+Um we have to rename. So I'm going to
+run rename. Actually python 3 rename.py.
+That's what they say in the docs. Pretty
+sure. Yep. Rename.py. Okay. Oh, and I
+have to pass it
+pair plugin. Yes. You want to remove?
+Yes. Okay. Sweet. Did that just say all
+works done instead of
+work. This is not an English speaker or
+they just made a typo. So, I'm going to
+go fix that in a PR. Farm that GitHub
+clout. Okay. Um, this should be gone
+now. Edit. Bang. Yep. Okay. So, we want
+to create a new module. Local M. Return
+that module. Return M. Set this be
+empty. and then say paste in our
+function. I actually think I didn't copy
+it to the system clipboard. So, I'm
+going to go redo that. Uh, yank go
+visual delete. Okay, paste that in
+there. The reason I yanked twice there
+is one because I have a a space Y to get
+it to system clipboard and then I wanted
+to delete it. I should really have
+leader D for that, but I don't know why
+I don't. And then let's say jump pair,
+we have to define it on it. So m do jump
+pair equals function and then I think we
+can delete that like that. Beautiful.
+And we should be good. Now we have to
+make a GitHub repository for this. So
+what I'm going to do is
+um say ghre repo create
+public
+pair graphql name already exists in this
+account create repository. I guess I
+already have one in pair. Maybe I've
+done this in the past. Um, get remote
+remove
+origin. Get remote add
+origin. Silvin Franklin/pair. I don't
+know if I need the full
+URL. Sweet. I don't think I did. Let's
+slit lazy take over. Add commit. Sure.
+In
+it. Boom.
+Fatal. Oh Okay, that did not work.
+Get remote. Remove origin. Get remote
+add
+origin.
+httpsgithub.com/selvinfranklin/pair.
+Okay, there we go. Um,
+push force push. Boom. I think I had an
+old version of this video running.
+That's why I'm switching shells to avoid
+completion. Um, anything for the
+theatrics, you know. Okay, so that's
+great. How do we install it? I have this
+website called installma. It's kind of
+halfbaked. Um, but what it lets you do
+is generate install instructions. So,
+I'm going to say pair and then this will
+give packer and lazy. So, I can copy
+packer. Um, I think the copy button is
+not working at the moment. That's why
+I'm doing
+this. So, I'm going to open up my
+config. We need to install this plugin
+in lazy. The way you do that is you
+actually have
+a NVM you have like plugins directory.
+So I'm going to create a new one called
+pair.lam and then here you just set up
+the thing. So I'm just going to paste
+that thing I copied earlier with packer.
+You don't need that. And then we return
+this table. So when Franklin switch pair
+it's not. Um and then we don't have a
+setup method. What we do have is that
+one switch pairs method. I think that's
+what it's
+called. Um, and it jump pair. So, what
+we do is let's just say local pair
+equals require pair and then
+vim.keymap
+set. I actually don't think it's that.
+Let me jump into keys. See what it is.
+Okay, I'll delete that and bring it
+back.
+We need it in the function leader B. We
+would jump pairs, but this time it's
+going to
+be a DT quote. There we go. A function.
+And in here, I'm just going to
+call
+pair.jump
+pairs. And that can stay silent. And
+this will be my actually my install
+instructions for the plugin. So I'm
+going to yank that system. Yank it could
+actually go back to the plugin. Open up
+the readme. Delete everything here.
+pair.nv. Actually, it's just pair.
+There's no
+end. Well, I'll put it
+anyway. Easily
+switch between two file
+pairs.
+Yeah. Um, and then paste
+this. Actually, I'll just paste the
+entire thing.
+install.
+Oops. Make this slightly smaller. Lua
+code block. Paste it. There we go.
+That's looking good. I'm just going to
+equals this out. Make sure the
+formatting is good. Delete the bottom.
+Check that this looks good on
+peak. Yeah, that's good
+enough. Okay. and then push that commit
+feed actually docs
+read push that go back here now let's
+check this worked so I'm going to go
+into
+vim it's not installing that's probably
+because it's already installed because I
+had a earlier version of this so I'm
+going to sync it should
+reinstall pair yep now let's just check
+this is working
+um let's see do I have C++ file. Well,
+just check in a TypeScript file.
+Types jump pairs nil value. Did I
+misspell
+it? What is
+wrong? Pair.jump pairs.
+Is
+this
+pair
+plugin
+knit? Oh, it's actually just jump pair.
+Um, okay. I won't rename it because this
+will be easier. I'll just say jump pair.
+And then we should be good to open up a
+typed file, not a recognized file pair.
+Boom. So, it's working. And just to
+verify that, if I go to my
+3D engine, 3D learning resources,
+whatever, and then I go back into Vim,
+open up a C++ file, and that doesn't
+have a corresponding header. Let's try
+engine. Boom. Switching perfectly. So,
+that's pretty much it. Let's see
+anything else I want to add. There are
+tests and stuff, but um I don't really
+feel like writing those right now. Those
+are a later me problem or some kind
+contributor can add them. That's how you
+churn out plug-in slop. We can go verify
+this is all up to date and working. If I
+open up pair and then I have a little
+shortcut to open the
+GitHub. Give it a
+star. Hella contributors
+already. That's
+weird. Why is everyone
+contributing? Weird. Well, I'll figure
+that out in the future. Thanks. Kind of
+a dumbass. Um, those are just uh
+contributors from this being a template.
+So, don't freak out if you think people
+are like griefing your thing. They're
+not. No one cares. Um, so yeah, thanks.
+Hopefully you can turn out something
+meaningful to this community.
+

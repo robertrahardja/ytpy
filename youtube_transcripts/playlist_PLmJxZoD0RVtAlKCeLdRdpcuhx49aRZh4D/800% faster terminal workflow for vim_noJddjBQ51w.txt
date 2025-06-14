@@ -1,0 +1,84 @@
+Title: 800% faster terminal workflow for vim
+Video ID: noJddjBQ51w
+URL: https://www.youtube.com/watch?v=noJddjBQ51w
+
+Hi. All right, enough wasting time.
+Let's get right into it. You can
+actually pause Vim instead of quitting
+it. You can actually pause any Unix
+process for that matter. So, here's how
+you do it. Let's say you're in Vim and
+you have a project file open like this
+Python file for this project that I've
+been working on with dogs and people. If
+you want to quit this, pretty easy. You
+can just Qbang WQ. If you want to pause
+the file from normal mode, you can hit
+Ctrl Z. And you can see zish will say
+suspended mim. If you're in another
+shell like fish for some reason,
+sometimes it just won't say that, but
+it's this. It'll it'll work the same
+way. So, now that you're here, you've
+got your shell. You can do whatever you
+want. LS, whatever. You can now jump
+back in by hitting FG, which stands for
+foreground. It'll bring it back. And
+this will work for anything. So for
+instance like if you have an npm server
+npm ordev and you want to just like get
+rid of this process because you're
+looking at the output somewhere else
+like your browser control Z and then
+it's suspended but it's still running.
+So if I click on this it'll open up
+whatever it's taking a sec but you get
+the idea.
+So the reason this is so overpowered I
+think is because it lets you work with
+terminals in Vim very easily compared to
+any other approach. There's a bunch of
+different ways you could do that. The
+order would go like this. The worst is
+using your terminal emulator like
+creating a new window like that or a new
+tab. That's just like bad because it's
+not you can't really take that with you
+in SSH and that's something I value a
+lot in workflow even if you're not like
+a DevOps engineer I it it also just
+clutters up your screen. Next approach
+is T-Mox which is better because you can
+take that with you most of the time into
+a remote server. Sometimes they won't
+have it installed and that's a little
+annoying. So that's why T-Mox isn't
+quite as good as this. And then there's
+like the term command within Vim, which
+is almost as good, but I feel like term
+sometimes it's a little clunky to switch
+back and forth between. You have to like
+use window controls and they're fine.
+And you can get the the term plugins and
+whatnot. But I think this is the most
+native and it's the most quick. You just
+boom, Vim is quit. Now I can cd around
+whatever list ping
+Google, you know, just do whatever you
+want. And just like that, FG, boom, back
+in Neoim. And I think it's just it's
+native, like you can carry it with you
+wherever you have Vim. And so often I'm
+on a server and I don't have access to
+T-Mox or any other workflow stuff, and I
+just want to leave Vim, do like three
+commands, and come back in. And it's
+just the cleanest way. It's one keyboard
+shortcut, and then FG to jump back in.
+Took me a long time to figure this out
+for some reason. I always knew that
+control Z like quit certain processes,
+but I don't know why I never figured out
+I could do it on Vim. Um, but yeah,
+there you
+

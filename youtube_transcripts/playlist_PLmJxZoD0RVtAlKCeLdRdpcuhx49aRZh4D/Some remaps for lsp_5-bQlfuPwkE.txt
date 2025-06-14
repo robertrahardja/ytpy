@@ -1,0 +1,171 @@
+Title: Some remaps for lsp
+Video ID: 5-bQlfuPwkE
+URL: https://www.youtube.com/watch?v=5-bQlfuPwkE
+
+Back when I was a Vim noob, I'd have my
+LSP throwing errors and I didn't really
+know how to deal with that. I'd just
+like be able to see half of them because
+they would not wrap and I'd be like,
+"Well, Got to just uh copy what I
+can see and paste it into Google." And
+that was just terrible. Um, but luckily
+I became more based since then and I
+actually read the manual and the
+documentation and I know how to just
+wrangle that LSP errors like nobody's
+business. a workflow went from like just
+terrible to like creamier than a
+medieval dairy. And I'll show you how
+you can do the same if you're in a
+similar spot to where I was.
+So, pulling up Vim, I'm going to find a
+file with a lot of errors in it, for
+example. It should be pretty easy
+knowing me. I'm actually going to just
+open up my LSP config because that'll
+have errors in it for sure, or at least
+warnings. Yeah, you can see right there
+on line 19, 18, 13. Relative line
+numbers.
+Um,
+141. Yeah. So, unused unused local. You
+can actually see all the maps down here,
+and I'll go through them. So, the first
+one is just capital K. That's actually
+that might just be inbuilt. I don't know
+why I have that mapped, but that just
+shows you information about whatever
+you're hovering over. The next one is
+um actually we'll do them a little out
+of order. Um the next one is leader LK
+which will show the error for the
+current line. So if it was like super
+long and if I did something like
+egregiously wrong, I put that right
+there. Um oops. That's that opens up a
+terminal wrong command. Um leader LK
+that would show me like the full thing
+that's going off. So that's pretty nice.
+And then I actually have a couple of
+commands to jump to errors. Space LN and
+space LP. And the reason for the L is
+actually just because it's like
+language. That's how I remember it in my
+head. So leader LP will take me there.
+And if I do that again, that'll take me
+to the next and the next. Oops. And then
+yeah, leader LN leader LN leader LN and
+sweet, we're back. We're not yet back.
+Still not yet back. I'm just going all
+the way to the bottom. I can use those
+to jump around. Those are pretty nice if
+you want to like spot fix errors. I also
+have leader
+L, which is suggested fixes. They're
+kind of terrible most of the time.
+Sometimes, depending on what LSP client
+you're using, they'll be a little
+better, but no, most of the time they
+suck. But the best one by far is
+language formatterers. You have to
+install these for basically everything
+cuz one of the biggest noob mistakes you
+can possibly make is trying to fix
+formatting by yourself. Like say you
+have some weird formatting stuff like
+this is hella indented or you've got
+like spaces here or this is like all the
+way back. I have leader LF for language
+format. Let's indent this even more. And
+that will just fix everything. So LF,
+boom, all fixed. And you can get
+formatterers for basically every file.
+The way you install them, at least I do,
+is with this plugin called Mason. And
+then you can filter for formatterers.
+Um, let's see there. How do you filter?
+Control F. Nope, that's not it. What I
+do is just search
+format. Oh no, I'm really stupid. You
+can just hit five and it'll go to the
+formatter page. Ignore that. Um, yeah,
+you can search through all of them. Some
+of them are depreciated, but basically
+everything major you need, you can get.
+And sometimes languages will just have
+formatterers built in for them. It's a
+little confusing. There's like
+language language server protocol have
+formatterers themselves, but then
+sometimes a language will demand like an
+extra formatter plugin. So it is a
+little bit of a nightmare and it's kind
+of a headache to get set up, but it's so
+worth it once you
+do. Leader
+LR lets you rename things. So this is
+kind of nice if you have like a variable
+like for instance if I create a typed
+variable just to plug the language a
+little bit more. Um let's say this is
+equal to the integral from 0 to
+10. I think I have to type the whole
+integral. Yeah. And then we have like
+some multi-line math. Put this in there
+and that in
+there. Actually just put this in there
+twice. I don't I'm I don't know what I'm
+even doing. But then I can space LR for
+language rename um and type that. Boom.
+I don't do this a lot because
+substitution I find is just better. By
+the way, this is what that would look
+like. Um so like instead I'll just type
+s slash this slash that. And that's just
+a little quicker. But for certain
+specific workflows where like the
+variables in weird places are mixed with
+other things of the same name and you
+don't really want to run a substitution,
+that's pretty good. GD is also a very
+good remap. What this allows you to do
+is go to the definition of something and
+then you can use control O to jump out
+of it. Something I do all the time. Um,
+so let me show you an actual example of
+this. If I go to C++ file right here and
+I have this class and I want to go to
+the where the class is defined, I can do
+GD
+um on the class and then boom, it takes
+me to the class definition and then
+control O to jump back out of it. And
+that's my own code, but sometimes you
+want to jump into like dependencies. So
+for instance, right here, let's say open
+up like this Rust file. Terrible file to
+open.
+But here um and there's this I'm
+deriving this parser and debug traits.
+And what if I want to see what the
+parser looks like under the hood? I can
+actually go GD and then I can just start
+reading the type definition of parser
+which is so incredibly useful because
+you can figure out exactly what it's
+doing and what to pass to it. And then
+you want to get back out of it, you can
+also control O and you're back there.
+And then another trick is you can open
+up your file explorer from here and then
+you can see what the library looks like
+on the inside. Um, and you can see
+exactly where it is in the dependencies
+which is awesome. Um, so yeah, those are
+the uh LSP commands that will take you
+from pretty god awful to one of the
+best. Maybe not one of the best, but a
+little better. Yeah. Thanks for
+watching.
+

@@ -1,0 +1,183 @@
+Title: Typst and Vim complete setup guide
+Video ID: mO0957nYAwk
+URL: https://www.youtube.com/watch?v=mO0957nYAwk
+
+this is a full guide on how to set up
+types to neovim for taking notes and
+doing homework if you're a math major or
+otherwise need to do some kind of math
+type settings so
+um let me jump into like a homework
+directory so I can kind of demo what
+this setup is capable of I took abstract
+algebra a couple semesters
+ago so if I jump into like problem set 4
+you can see I've got syntax highlighting
+and everything set up so also com with u
+Auto suggesting completion and language
+hover and one of the biggest things
+you're going to need for taking math
+notes is a way to preview the compiled
+document and there's a plugin called
+types to preview I have it wrapped in
+another plugin called Omni preview which
+lets you preview multiple file
+types and I have a keymap for that space
+p and that'll open up a preview of this
+it's instant because it's fragmentized
+svgs instead of a compiled PDF and like
+you may not believe it's completely
+instant but let me copy those lines and
+paste it 200 times now the file is a th
+lines long and I go over there and it's
+completely refreshed let me actually
+bring
+over this so you can see it back to back
+or side by side I
+guess um I'll undo that
+and zoom in on this a little bit can
+just do that through the trackpad or
+command
+plus and whatever I type it just appears
+completely live character for character
+which is completely awesome compared to
+latch which is a nightmare to work with
+and now if you wanted to export this you
+can do it through the type CLI on the
+command line so I could do like types
+compile pet 4
+solution but to make that faster I wrote
+a little plugin that uses
+telescope and it gives me some options
+of I hit leader uh e p i can export to
+PDF but also PNG SVG and HTML which are
+supported exports for
+types and so if I select
+PDF compiled in about half a second and
+to verify that works if I open
+up problem set 4p PF you can see I
+actually exported it to an SVG so I'll
+do that cuz everyone knows you could
+open that
+but if I open this up boom I don't know
+why that opened the tour browser it's
+weird but that's working
+great so let me jump into the
+configuration show you how that
+works the main thing to get the language
+features is something called tiny Mist
+which is a language server if you're
+using Mason and Vim you can just install
+that and set it up with Mason's
+configuration in my LSP
+file I actually override one thing which
+is the formatter to type style because I
+found the other one doesn't work and I
+also put export PDF to never because it
+kept that's on Save I kept saving
+randomly and getting PDF exports when I
+didn't want to it's not that it's like
+slow or
+anything it's just an extra five and
+it's kind of annoying so to get the
+preview functionality that's probably
+biggest on your mind is I have it
+in Omni preview which is a plugin I
+wrote Let's see open that up in the
+browser and this basically wraps types
+preview and a bunch of other things like
+Peak and CSV View and it just lets you
+display different file types really
+easily all through one
+command you don't have to install that
+that's my personal plugin but that is
+how I got types preview
+working types preview
+specifically needs to find your tiny
+Mist installation because it goes
+through that it goes through tiny Mist
+version of
+types um to get the preview feature
+which is a little bit confusing and it
+can be kind of buggy
+but tiny Mist has documentation around
+that and yeah so that's the preview
+functionality I have that mapped to
+lader
+p uh let me actually make this
+smaller and so that's just it's actually
+the
+Omni preview open
+command it's that's spelled wrong it's
+like that on preview open but
+or start or something it wouldn't work
+on this anyway because it's Lua and then
+the way I had that telescope picker to
+export the files
+was
+through a really simple function all
+that it is is basically running this
+command types compile and then the file
+name and Then followed
+by format like PDF or something but I
+just use telescope to pick from a couple
+of things and then I have a key map for
+that I know this all probably looks
+complicated but it's all in my uh GitHub
+you can copy and paste it
+easily um yeah right there that that's
+the format line for this little command
+so super simple um and this setup is
+super
+powerful it compiles so
+quickly that I can actually actually
+let's see if I have nonsense here yeah
+if I preview this it can generate an
+entire nonsensical math
+paper this is a fun little
+plugin
+and if I delete this and start
+typing you can see math is being
+generated here on the
+side as I type in real time it's a tiny
+bit laggy but it's not terrible and it
+creat creates a
+full unique math
+paper it's all nonsensical if you read
+it closely but you can see just how fast
+this setup
+is now for an example of something
+actual an actual um piece of
+homework um that I was using that
+template form I'll go back
+to the algebra directory
+you can see I have this Qs environment
+which all it really does is indent a
+little
+bit and that's pretty much it honestly
+um it actually doesn't even look like it
+does that this is kind of an old version
+of it I think but I wanted to keep this
+as minimal as possible and looking like
+a professional ltech
+paper and then I have the this simple P
+oops
+PF or PR
+RF I guess I'm not doing any proofs in
+this one well I have this prf
+environment which gives you a QED Square
+so if I type some math in here like
+sum n = 0 or n minus 0 to the whatever
+you get what I mean it adds a
+little QED box over here in the
+corner so yeah that's pretty much it I
+forgot to mention but the dot files to
+all of this are on my GitHub which is
+linked in the description or maybe I did
+mention that I don't know um I have like
+four strains of the flu right now all at
+once so I'm completely cooked and that's
+why I'm like mouth breathing and stuff
+hopefully uh you didn't mind but thanks
+for watching
+

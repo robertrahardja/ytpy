@@ -1,0 +1,154 @@
+Title: Svelte + Neovim setup
+Video ID: Quw43NHvtps
+URL: https://www.youtube.com/watch?v=Quw43NHvtps
+
+We have a lot of Vim content and a lot
+of spelt content on YouTube, but no real
+video that ties them both together. So,
+I wanted to make a real quick going over
+my setup video. Um, and this is going to
+be kind of high level. I'm going to
+assume you know basic Neoim package
+managers. I'm using um Mason and LSP
+config to get most of this working. no
+formatterater um plugin, just the
+default Mason formatter installer. Um
+and that's pretty much it.
+And I won't do any like super advanced
+felt or anything. This is just my setup,
+but uh show don't tell, right? So I have
+this empty spelt file. I've got
+completion like the standard LSP stuff.
+Um so if I open up a script, you can see
+I just type TS and hit control E for
+expand. Um, that's that's my main
+snippet really. And I can start typing
+and get a nice little
+completion. Um, and then I've got
+snippets for each, which is uh something
+in spelt. So if I had like an array
+um of five
+things, actually I'm going to do in Vim
+5 a
+test, close and then I'll have a nice
+little array. And then I could do
+each R
+as A and then in here just render A. And
+then we should see on the preview a gets
+rendered a few times. Very nice. Um, and
+then I've got one for if
+too. And I've got one for
+await. So that's
+solid. Um, and I'm also in here running
+Tailwind, of course, because everyone
+does that now. So, if I have a div,
+which I can also just type each one and
+then expand, um, then I could start
+putting on, you know, text red 300 text
+for
+3XL. Um, and then,
+hey, we should see that reflected.
+Beautiful. So, that's all good. Then
+I've also got the um the EMTT snippets.
+If you don't know about these, these are
+very powerful. They're in pretty much
+every HTML modern IDE. So what you can
+do is say that I want a body with a main
+function or tag body main and then in
+there I want an unordered list and in
+that list I want 10 list items. So I can
+do that with these kind of like brackets
+going into each other. And if I hit
+control Y it'll expand all of that. So
+that's very nice. Uh if you don't know
+the basic Vim tag motions it's also
+great to know those. So, if I want to
+select this main, I can do V around tag.
+Um, select that just like that. Um, and
+then there's V inside of tag, too, of
+course. And you can use change and
+delete, same as other motions. Uh, so
+that's all well and good. There's one
+problem you'll run into most likely, and
+that's in spelt um in some other
+languages like Vue, I think, or not
+languages, but you know what I mean. um
+you have like a library file that's just
+JavaScript or TypeScript and then you
+have your main spelt or view or whatever
+file and you get this issue sometimes if
+you declare a variable in the um the
+library file like for me it's an
+index.js JS. Um, this is this is some
+other project I was working on.
+Um, but when you try to change a
+variable and then reimpport it in this
+felt, sometimes the variable will be
+correctly changed and you can use it,
+but your IDE will throw some errors. I
+fixed it, so I can't really show that
+here, but it's like missing import and
+it it's finding it all correctly. It's
+just like a false error. And that's
+because the language servers felt um and
+Typescript language servers sometimes
+don't know how to talk to each other.
+And I solved that through this GitHub
+issue I
+found in this is my LSP config. So if I
+jump to spelt, you can create this
+little auto command um for post buffer
+write and just for JavaScript and
+TypeScript. And what it does is it sends
+this dollar sign slash onid change ts
+orjs file um and it I'm not exactly sure
+how that API works but it it syncs them
+up so you don't get that which is just
+kind of a little annoying thing that you
+can see pop up
+occasionally. Um that's pretty much it.
+Specific language servers I'm using are
+I think LSP info will show
+that. Yes.
+um the spelt the tail and CSS
+um TypeScript language server and that's
+pretty much it.
+One more thing that's nice if you're uh
+in a team with people who are against
+Tailwind and those people are out there
+unfortunately
+um but you're like me and you've used so
+much Tailwind you can't do normal CSS
+anymore then there's this cool plugin
+called
+um I think it's
+[Music]
+twwcs and it lets you just type Tailwind
+in a CSS block um and then it'll expand
+it to normal CSS which is kind of sad
+that um that we've come to that but you
+know it is what it is. So if I type
+style and I want to make all these
+um these
+H1 behave like I don't know I want them
+all to be bold. Um instead of instead of
+like typing out whatever the CSS
+equivalent, I can type font bold and
+then type Y and it'll expand it for me
+through that little uh completion
+plugin.
+Um, and over over a long term, I guess
+I'd maybe get used to CSS again, but I'm
+never going to do that just because
+Tailwind is so fast. Um, but yeah,
+hopefully you got something out of that.
+Um, feel free to comment. I'll try to
+help you out if you're struggling. And
+if you need a more basic support and
+you've watched this far in the video,
+it's kind of impressive that you have
+that kind of attention span for
+complicated stuff. And I would go check
+out the Primagen. He has a good uh Vim
+LSP setup tutorial. Uh yeah, cheers.
+

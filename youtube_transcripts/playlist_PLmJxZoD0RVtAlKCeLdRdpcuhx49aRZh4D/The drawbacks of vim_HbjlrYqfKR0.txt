@@ -1,0 +1,58 @@
+Title: The drawbacks of vim
+Video ID: HbjlrYqfKR0
+URL: https://www.youtube.com/watch?v=HbjlrYqfKR0
+
+there are a couple of huge drawbacks
+that come with using Vim that don't get
+talked about all that much by the Vim
+enthusiasts out there well the first one
+does I would say once you use Vim it's
+like opium you can't really unuse Vim
+you want to use it everywhere like in
+Google Docs in the browser on your phone
+you're thinking like if I hit F and J on
+the phone to go around in a text message
+is that like would that give me the same
+feeling or would that just be kind of
+ridiculous and it just consumes your
+life all you can think about is vim and
+all you want to use is vim when you're
+walking around on the street sometimes
+I'm like man it's like taking me forever
+to get over to this place like if I
+could just hit capital G to go
+completely to the bottom of the street
+that would save me a bunch of time and
+that's one that's one downside of it but
+that's like saying oh it's so good that
+like you'll want to use it everywhere
+not really a downside the real other
+downside I found is some people who are
+serious Vim users and they become
+serious Vim users like early on in their
+Development Career kind of let Vim be
+their development skill and they're like
+really really good at vim and they have
+a crazy tricked out config kind of like
+me actually um but actually like don't
+know that much code don't know how to
+code that well and like they've made a
+couple of things and they understand
+like basic programming because of Lua
+but they have these crazy configurations
+I'm I'm pretty much talking about myself
+here to be clear um but actually I'm
+like not very good at coding I'm just
+really good at vim and that's great for
+me and my like personal wellbe but if
+you want to make like an impact on the
+world no one really cares like how fast
+you're flying through code I mean it's
+good for you I just think don't let
+don't let yourself be distracted by how
+good Vim is and how good your workflow
+is if you're not actually doing work
+like in order for a workflow to to flow
+you need work for it to flow
+over um that's just my two cents on that
+

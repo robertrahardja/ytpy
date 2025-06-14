@@ -1,0 +1,98 @@
+Title: This vim command is a Banger
+Video ID: SNAMMWBHUPM
+URL: https://www.youtube.com/watch?v=SNAMMWBHUPM
+
+A lot of you seem to really enjoy the
+video about the normal command, so I
+thought I'd make another one about
+another underrated Vim command and maybe
+even make this into a series if there's
+interest. Um, so this one is about the
+double bang exclamation mark exclamation
+mark. And what it lets you do is run a
+shell command and then insert the output
+of it back into your buffer. So let me
+jump in and show you some examples.
+Typically what I use this for is when I
+want to get the path of something on my
+system like for instance the cargo
+package manager if you're a Rust fan. So
+in normal mode um I could type bang bang
+and then it pulls up this
+colonexclamation mark and then I can
+type which
+cargo and then you can see it inserts it
+right in there. Um, another one you can
+do sometimes is I mean I have a snippet
+that does date
+um like that, but if you wanted like a
+Unix formatted date, you could do bang
+bang date um and then you know pass in
+any kind of formatting options you want
+to be. And then another great case of it
+is if you want to run uh some kind of
+file and then pipe the output back into
+the buffer. So, let's say that I've
+got a little Python program, right?
+Like, um, it's going to loop 10 times
+and then it's going
+to print
+out an F string. And in that F string,
+I'm actually going to have print and
+then I and then so I'm going to print
+out print. It's a little weird, I know,
+um, but it is what it is. And then what
+I can do is go bang bang and it takes me
+into this oneshot shell mode. I'm gonna
+go uh level down actually um so that I
+don't overwrite this. And then
+type python 3 and then instead of typing
+up main.py, you can type percent sign
+and that'll expand to the same thing.
+And then hit enter. And it'll actually
+insert the output of this program right
+down here. It's kind of a weird example.
+Um but I found myself doing this once in
+a while. If I want to insert something
+and I don't really want to mess around
+with a macro or Vimcript, you can just
+use Python to pipe it in. And you don't
+have to be in the same file obviously.
+Like I could open up another file, you
+know, called test.py. And then in here,
+I could type out Bang Bang Python 3
+main.py. And then it would insert. I
+don't know why it also inserted that
+uh those those things. Maybe I
+accidentally printed an extra. Oh,
+because I have those print things at the
+bottom. Yeah, that checks out. Um so
+yeah, that's a pretty interesting use
+case. There are a couple things to keep
+in mind with this though. First one is I
+don't know how to change this, but it'll
+overwrite whatever lines you've got.
+though. Then if I if I do colon dot
+right there and like who am I with my um
+cursor on it, it'll just write over it.
+Um not ideal sometimes, but you can
+always just delete entire word and put
+it where you want it. Um yeah, I'm not
+really using any crazy advanced shell
+stuff here. Um, I'm not a Unix Chad
+enough yet for that, but maybe some
+people in the comments of this will have
+some ideas about what to do with this.
+You could set up crazy aliases and
+stuff. I wonder actually if you can
+output like a man page in here. Um, I do
+bang bang man
+um curl. Yeah, you can. It looks
+horrible because it's a grath. Um, and
+the it's kind of in a weird format, but
+hey, if you wanted to. Um, but I I know
+you could open man like man curl and
+then it would display properly.
+Um, but yeah, so hopefully you can do
+something with that. Um
+

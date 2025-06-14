@@ -1,0 +1,11 @@
+[project]
+name = "ytpy"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pyperclip>=1.9.0",
+    "requests>=2.32.3",
+    "youtube-transcript-api>=1.0.3",
+]
