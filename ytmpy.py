@@ -164,9 +164,14 @@ def download_subtitles(url, output_dir, languages=['en'], prefer_auto=False):
         print(f"Error downloading subtitles: {e}")
         return False
 
-def convert_subtitles_to_text(subtitle_dir, output_format='txt'):
+def convert_subtitles_to_text(subtitle_dir, output_format='txt', add_paragraphs=True):
     """
     Convert downloaded subtitle files (VTT/SRT) to plain text.
+    
+    Args:
+        subtitle_dir: Directory containing subtitle files
+        output_format: Output format ('txt')
+        add_paragraphs: Whether to add paragraph breaks for better readability
     """
     subtitle_files = []
     
@@ -186,6 +191,10 @@ def convert_subtitles_to_text(subtitle_dir, output_format='txt'):
             plain_text = extract_text_from_subtitles(content, str(sub_file))
             
             if plain_text:
+                # Add better paragraph formatting if requested
+                if add_paragraphs:
+                    plain_text = add_paragraph_breaks(plain_text)
+                
                 # Create output filename
                 output_file = sub_file.with_suffix(f'.{output_format}')
                 
@@ -204,9 +213,34 @@ def convert_subtitles_to_text(subtitle_dir, output_format='txt'):
     
     return converted_files
 
+def add_paragraph_breaks(text):
+    """
+    Add paragraph breaks to improve readability of transcript text.
+    """
+    lines = text.split('\n')
+    formatted_lines = []
+    
+    for i, line in enumerate(lines):
+        formatted_lines.append(line)
+        
+        # Add extra line break after sentences that end with punctuation
+        # and before lines that start with capital letters (likely new thoughts)
+        if i < len(lines) - 1:
+            current_ends_sentence = line.rstrip().endswith(('.', '!', '?'))
+            next_starts_capital = lines[i + 1].strip() and lines[i + 1].strip()[0].isupper()
+            
+            # Add paragraph break if current line ends a sentence and next starts with capital
+            if current_ends_sentence and next_starts_capital:
+                # But don't add if the next line is very short (likely a continuation)
+                if len(lines[i + 1].strip()) > 10:
+                    formatted_lines.append('')  # Add blank line
+    
+    return '\n'.join(formatted_lines)
+
 def extract_text_from_subtitles(content, filename):
     """
     Extract plain text from subtitle content (VTT or SRT format).
+    Preserves natural sentence breaks and paragraphs.
     """
     lines = content.split('\n')
     text_lines = []
@@ -217,6 +251,8 @@ def extract_text_from_subtitles(content, filename):
     if is_vtt:
         # Process VTT format
         in_cue = False
+        current_cue_lines = []
+        
         for line in lines:
             line = line.strip()
             
@@ -226,11 +262,22 @@ def extract_text_from_subtitles(content, filename):
             
             # Skip timestamp lines
             if '-->' in line:
+                # Save previous cue if exists
+                if current_cue_lines:
+                    cue_text = ' '.join(current_cue_lines)
+                    if cue_text:
+                        text_lines.append(cue_text)
+                    current_cue_lines = []
                 in_cue = True
                 continue
             
-            # Skip empty lines
+            # Empty line indicates end of cue
             if not line:
+                if current_cue_lines:
+                    cue_text = ' '.join(current_cue_lines)
+                    if cue_text:
+                        text_lines.append(cue_text)
+                    current_cue_lines = []
                 in_cue = False
                 continue
             
@@ -240,10 +287,18 @@ def extract_text_from_subtitles(content, filename):
                 clean_line = re.sub(r'<[^>]+>', '', line)
                 clean_line = re.sub(r'&[a-zA-Z]+;', '', clean_line)  # Remove HTML entities
                 if clean_line.strip():
-                    text_lines.append(clean_line.strip())
+                    current_cue_lines.append(clean_line.strip())
+        
+        # Don't forget the last cue
+        if current_cue_lines:
+            cue_text = ' '.join(current_cue_lines)
+            if cue_text:
+                text_lines.append(cue_text)
     
     else:
         # Process SRT format
+        current_subtitle_lines = []
+        
         for line in lines:
             line = line.strip()
             
@@ -255,8 +310,13 @@ def extract_text_from_subtitles(content, filename):
             if '-->' in line:
                 continue
             
-            # Skip empty lines
+            # Empty line indicates end of subtitle block
             if not line:
+                if current_subtitle_lines:
+                    subtitle_text = ' '.join(current_subtitle_lines)
+                    if subtitle_text:
+                        text_lines.append(subtitle_text)
+                    current_subtitle_lines = []
                 continue
             
             # This should be subtitle text
@@ -264,13 +324,20 @@ def extract_text_from_subtitles(content, filename):
             clean_line = re.sub(r'<[^>]+>', '', line)
             clean_line = re.sub(r'\{[^}]+\}', '', clean_line)  # Remove formatting
             if clean_line.strip():
-                text_lines.append(clean_line.strip())
+                current_subtitle_lines.append(clean_line.strip())
+        
+        # Don't forget the last subtitle
+        if current_subtitle_lines:
+            subtitle_text = ' '.join(current_subtitle_lines)
+            if subtitle_text:
+                text_lines.append(subtitle_text)
     
-    # Join all text and clean up
-    full_text = ' '.join(text_lines)
+    # Join with line breaks to preserve natural flow
+    full_text = '\n'.join(text_lines)
     
-    # Basic cleanup
-    full_text = re.sub(r'\s+', ' ', full_text)  # Normalize whitespace
+    # Clean up excessive whitespace but preserve line breaks
+    full_text = re.sub(r'[ \t]+', ' ', full_text)  # Normalize spaces and tabs
+    full_text = re.sub(r'\n\s*\n\s*\n+', '\n\n', full_text)  # Limit to max 2 consecutive newlines
     full_text = full_text.strip()
     
     return full_text
@@ -297,7 +364,7 @@ def list_available_subtitles(url):
         return False
 
 def process_url(url, output_dir, languages=['en'], list_only=False, 
-                prefer_auto=False, copy_to_clipboard=False):
+                prefer_auto=False, copy_to_clipboard=False, add_paragraphs=True):
     """
     Process a single URL (video or playlist) and download transcripts.
     """
@@ -327,7 +394,7 @@ def process_url(url, output_dir, languages=['en'], list_only=False,
     
     if success:
         # Convert subtitles to plain text
-        converted_files = convert_subtitles_to_text(str(output_subdir))
+        converted_files = convert_subtitles_to_text(str(output_subdir), 'txt', add_paragraphs)
         
         # Copy last file to clipboard if requested
         if copy_to_clipboard and converted_files:
@@ -374,14 +441,16 @@ Examples:
                         help='YouTube video or playlist URLs (space separated)')
     parser.add_argument('-f', '--file', 
                         help='Text file with YouTube URLs (one per line)')
-    parser.add_argument('-o', '--output-dir', default='youtube_transcripts',
-                        help='Output directory (default: youtube_transcripts)')
+    parser.add_argument('-o', '--output-dir', default='~/YoutubeTranscripts',
+                        help='Output directory (default: ~/YoutubeTranscripts)')
     parser.add_argument('-l', '--languages', nargs='+', default=['en'],
                         help='Preferred languages (default: en)')
     parser.add_argument('-c', '--clipboard', action='store_true',
                         help='Copy the last transcript to clipboard')
     parser.add_argument('--list-subs', action='store_true',
                         help='List available subtitles without downloading')
+    parser.add_argument('--no-paragraphs', action='store_true',
+                        help='Disable automatic paragraph formatting')
     parser.add_argument('--prefer-auto', action='store_true',
                         help='Prefer auto-generated subtitles over manual (default: prefer manual)')
     
@@ -404,8 +473,11 @@ Examples:
     
     # Create output directory
     if not args.list_subs:
-        Path(args.output_dir).mkdir(parents=True, exist_ok=True)
-        print(f"Output directory: {Path(args.output_dir).absolute()}")
+        # Expand user path (~)
+        output_dir = Path(args.output_dir).expanduser()
+        output_dir.mkdir(parents=True, exist_ok=True)
+        args.output_dir = str(output_dir)  # Update args with expanded path
+        print(f"Output directory: {output_dir.absolute()}")
     
     # Process each URL
     total_successful = 0
@@ -421,7 +493,8 @@ Examples:
             args.languages,
             args.list_subs,
             args.prefer_auto,  # Now defaults to False (prefer manual)
-            copy_to_clipboard
+            copy_to_clipboard,
+            not args.no_paragraphs  # Add paragraphs unless disabled
         )
         
         if isinstance(successful, int):
