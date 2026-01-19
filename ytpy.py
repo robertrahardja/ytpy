@@ -44,30 +44,37 @@ def get_transcript_with_ytdlp(url, temp_dir):
         
         print(f"Using yt-dlp version: {result.stdout.strip()}")
         
-        # Download subtitles only - prioritize auto-generated since manual subs might not exist
+        # Download subtitles - prioritize manual English, then auto-generated English
+        # Try manual English subtitles first (cleanest)
         cmd = [
             'yt-dlp',
-            '--write-auto-subs',  # Focus on auto-generated subs
+            '--write-subs',  # Manual subs first
             '--sub-lang', 'en',
             '--sub-format', 'vtt',
             '--skip-download',
             '--output', f'{temp_dir}/%(title)s.%(ext)s',
             url
         ]
-        
-        print("Downloading auto-generated subtitles with yt-dlp...")
+
+        print("Downloading English subtitles with yt-dlp...")
         result = subprocess.run(cmd, capture_output=True, text=True)
-        
+
         if result.returncode != 0:
-            print(f"yt-dlp error: {result.stderr}")
-            # Try with both manual and auto subs as fallback
-            print("Trying with both manual and auto-generated subtitles...")
-            cmd[1] = '--write-subs'
-            cmd.insert(2, '--write-auto-subs')
+            print(f"Manual subs not available, trying auto-generated...")
+            # If manual subs fail, try auto-generated English
+            cmd = [
+                'yt-dlp',
+                '--write-auto-subs',
+                '--sub-lang', 'en',
+                '--sub-format', 'vtt',
+                '--skip-download',
+                '--output', f'{temp_dir}/%(title)s.%(ext)s',
+                url
+            ]
             result = subprocess.run(cmd, capture_output=True, text=True)
-            
+
             if result.returncode != 0:
-                print(f"yt-dlp fallback also failed: {result.stderr}")
+                print(f"yt-dlp error: {result.stderr}")
                 return None
         
         # Find the downloaded subtitle file
