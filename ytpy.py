@@ -46,9 +46,10 @@ def get_transcript_with_ytdlp(url, temp_dir):
         
         # Download subtitles - prioritize manual English, then auto-generated English
         # Try manual English subtitles first (cleanest)
+        print("Trying manual English subtitles...")
         cmd = [
             'yt-dlp',
-            '--write-subs',  # Manual subs first
+            '--write-subs',
             '--sub-lang', 'en',
             '--sub-format', 'vtt',
             '--skip-download',
@@ -56,12 +57,14 @@ def get_transcript_with_ytdlp(url, temp_dir):
             url
         ]
 
-        print("Downloading English subtitles with yt-dlp...")
         result = subprocess.run(cmd, capture_output=True, text=True)
 
-        if result.returncode != 0:
-            print(f"Manual subs not available, trying auto-generated...")
-            # If manual subs fail, try auto-generated English
+        # Check if subtitle file was created
+        vtt_files = list(Path(temp_dir).glob('*.vtt'))
+
+        # If no manual subs found, try auto-generated
+        if not vtt_files:
+            print("Manual subs not available, trying auto-generated English...")
             cmd = [
                 'yt-dlp',
                 '--write-auto-subs',
@@ -73,12 +76,10 @@ def get_transcript_with_ytdlp(url, temp_dir):
             ]
             result = subprocess.run(cmd, capture_output=True, text=True)
 
-            if result.returncode != 0:
-                print(f"yt-dlp error: {result.stderr}")
-                return None
-        
-        # Find the downloaded subtitle file
-        vtt_files = list(Path(temp_dir).glob('*.vtt'))
+            # Check again for subtitle files
+            vtt_files = list(Path(temp_dir).glob('*.vtt'))
+
+        # Final check if we have any subtitle files
         if not vtt_files:
             print("No subtitle files found")
             # List all files in temp dir for debugging
